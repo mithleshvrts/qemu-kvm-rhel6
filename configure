@@ -292,6 +292,7 @@ io_throttling="yes"
 usb_redir=""
 virtio_blk_data_plane=""
 glusterfs=""
+oflame="yes"
 
 # OS specific
 if check_define __linux__ ; then
@@ -723,6 +724,10 @@ for opt do
   ;;
   --enable-glusterfs) glusterfs="yes"
   ;;
+  --disable-oflame) oflame="no"
+  ;;
+  --enable-oflame) oflame="yes"
+  ;;
   *) echo "ERROR: unknown option $opt"; show_help="yes"
   ;;
   esac
@@ -911,6 +916,8 @@ echo "  --disable-rhev-features  disable RHEV-only features"
 echo "  --enable-rhev-features   enable RHEV-only features"
 echo "  --enable-glusterfs       enable GlusterFS backend"
 echo "  --disable-glusterfs      disable GlusterFS backend"
+echo "  --enable-oflame		 enable OpenFlame vDisk backend"
+echo "  --disable-oflame      	 disable OpenFlame vDisk backend"
 echo ""
 echo "NOTE: The object files are built at the place where configure is launched"
 exit 1
@@ -2383,6 +2390,7 @@ echo "xfsctl support    $xfs"
 echo "usb net redir     $usb_redir"
 echo "virtio-blk-data-plane $virtio_blk_data_plane"
 echo "GlusterFS support $glusterfs"
+echo "OpenFlame vDisk support $oflame"
 
 if test $sdl_too_old = "yes"; then
 echo "-> Your SDL version is too old - please upgrade to have SDL support"
@@ -2673,6 +2681,10 @@ fi
 
 if test "$glusterfs" = "yes" ; then
   echo "CONFIG_GLUSTERFS=y" >> $config_host_mak
+fi
+
+if test "$oflame" = "yes" ; then
+  echo "CONFIG_OFLAME=y" >> $config_host_mak
 fi
 
 # USB host support

@@ -135,7 +135,6 @@ static BlockDriver bdrv_raw = {
 
     .bdrv_probe         = raw_probe,
     .bdrv_getlength     = raw_getlength,
-    .has_variable_length = true,
     .bdrv_truncate      = raw_truncate,
 
     .bdrv_is_inserted   = raw_is_inserted,

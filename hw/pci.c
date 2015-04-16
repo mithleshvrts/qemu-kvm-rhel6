@@ -484,48 +484,21 @@ static int pci_parse_devaddr(const char *addr, int *domp, int *busp, unsigned *s
 }
 
 /*
- * Parse device seg and bdf in device assignment command:
+ * Parse device bdf in device assignment command:
  *
- * -pcidevice host=[seg:]bus:dev.func
+ * -pcidevice host=bus:dev.func
  *
- * Parse [seg:]<bus>:<slot>.<func> return -1 on error
+ * Parse <bus>:<slot>.<func> return -1 on error
  */
-int pci_parse_host_devaddr(const char *addr, int *segp, int *busp,
+int pci_parse_host_devaddr(const char *addr, int *busp,
                            int *slotp, int *funcp)
 {
     const char *p;
     char *e;
     int val;
-    int seg = 0, bus = 0, slot = 0, func = 0;
-
-    /* parse optional seg */
-    p = addr;
-    val = 0;
-    while (1) {
-        p = strchr(p, ':');
-        if (p) {
-            val++;
-            p++;
-        } else
-            break;
-    }
-    if (val <= 0 || val > 2)
-        return -1;
+    int bus = 0, slot = 0, func = 0;
 
     p = addr;
-    if (val == 2) {
-        val = strtoul(p, &e, 16);
-        if (e == p)
-            return -1;
-        if (*e == ':') {
-            seg = val;
-            p = e + 1;
-        }
-    } else
-        seg = 0;
-
-
-    /* parse bdf */
     val = strtoul(p, &e, 16);
     if (e == p)
 	return -1;
@@ -547,13 +520,12 @@ int pci_parse_host_devaddr(const char *addr, int *segp, int *busp,
     } else
 	return -1;
 
-    if (seg > 0xffff || bus > 0xff || slot > 0x1f || func > 0x7)
+    if (bus > 0xff || slot > 0x1f || func > 0x7)
 	return -1;
 
     if (*e)
 	return -1;
 
-    *segp = seg;
     *busp = bus;
     *slotp = slot;
     *funcp = func;

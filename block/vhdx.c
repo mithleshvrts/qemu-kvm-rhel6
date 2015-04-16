@@ -628,20 +628,12 @@ static int vhdx_parse_metadata(BlockDriverState *bs, BDRVVHDXState *s)
     le32_to_cpus(&s->logical_sector_size);
     le32_to_cpus(&s->physical_sector_size);
 
-    if (s->params.block_size < VHDX_BLOCK_SIZE_MIN ||
-        s->params.block_size > VHDX_BLOCK_SIZE_MAX) {
+    if (s->logical_sector_size == 0 || s->params.block_size == 0) {
         ret = -EINVAL;
         goto exit;
     }
 
-    /* only 2 supported sector sizes */
-    if (s->logical_sector_size != 512 && s->logical_sector_size != 4096) {
-        ret = -EINVAL;
-        goto exit;
-    }
-
-    /* Both block_size and sector_size are guaranteed powers of 2, below.
-       Due to range checks above, s->sectors_per_block can never be < 256 */
+    /* both block_size and sector_size are guaranteed powers of 2 */
     s->sectors_per_block = s->params.block_size / s->logical_sector_size;
     s->chunk_ratio = (VHDX_MAX_SECTORS_PER_BLOCK) *
                      (uint64_t)s->logical_sector_size /
